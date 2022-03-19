@@ -1,0 +1,14 @@
+bot:
+  token: 5178362642:AAHsezcpWT45Y455LAZ5cEjKV9UNKdBZxSc
+  admins:
+    - 1985947355
+  # like | comment | like_comment
+  check_type: like
+  queue_length: 5
+
+vk:
+  token: 053daec9fb1a547799d03a973d278046e557996cecc56298069c07193f20b94e5a621e2b206e0b65867be
+
+db:
+  type: redis
+  host: localhost
