@@ -2,15 +2,13 @@ import asyncio
 import logging
 
 from aiogram import Bot
-from aiogram.dispatcher.filters import ChatTypeFilter
-from aiogram.types import BotCommand, ChatType
+from aiogram.types import BotCommand
 from loguru import logger
 
-from chaticommentsvk.apps.bot.handlers.common_commands import all_text, register_common_handlers
-from chaticommentsvk.apps.bot.middleware.trottling_middleware import ThrottlingMiddleware
+from chaticommentsvk.apps.bot.handlers.admin_handlers.admin_commands import register_admin_commands_handlers
+from chaticommentsvk.apps.bot.handlers.common_commands import register_common_handlers
 from chaticommentsvk.apps.bot.utils.message_processes import message_delete_worker
 from chaticommentsvk.config.log_settings import init_logging
-# Регистрация команд, отображаемых в интерфейсе Telegram
 from chaticommentsvk.loader import bot, dp
 
 
@@ -38,7 +36,7 @@ async def main():
 
     # Регистрация хэндлеров
     register_common_handlers(dp)
-
+    register_admin_commands_handlers(dp)
     # Регистрация middleware
     # dp.middleware.setup(FatherMiddleware())
     # todo 19.03.2022 17:42 taima:

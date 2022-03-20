@@ -1,10 +1,21 @@
-from aiogram import types
+from collections import deque
 
-from chaticommentsvk.loader import bot, redis
+import aioredis
+from pydantic import BaseModel
+
+from chaticommentsvk.apps.vk.classes import CommentRequest, LikeRequest, Request
+from chaticommentsvk.config.config import config
+
+obj = Request(
+    like=LikeRequest(type="post", owner_id=624187368, item_id=385),
+    comment=CommentRequest(owner_id=624187368, post_id=385),
+    url="https://vk.com/wall624187368_385",
+)
+
+current_posts = deque([obj], maxlen=config.bot.queue_length)
+redis = aioredis.from_url(f"redis://{config.db.host}", decode_responses=True)
 
 
-async def message_controller(message: types.Message):
-    odl_message: dict = await redis.getset(f"message_{message.from_user.id}",
-                                           {"chat_id": message.chat.id, "message_id": message.message_id})
-    if odl_message:
-        await bot.delete_message(**odl_message)
+class DelMessage(BaseModel):
+    chat_id: int
+    message_id: int

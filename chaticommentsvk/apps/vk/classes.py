@@ -51,36 +51,16 @@ class Response(BaseModel):
     def __bool__(self):
         return self.is_successfully
 
-    # @validator("is_successfully", always=True)
-    # def is_successfully_check(cls, value, values):
-    #     if values["is_liked"] and values["is_commented"]:
-    #         return True
-    #     return False
-
-
-class SuccessfullyResponse(BaseModel):
-    url: str
-
-    def __bool__(self):
-        return True
-
-
-class UnsuccessfulResponse(BaseModel):
-    url: str
-
-    def __bool__(self):
-        return False
-
-
-# todo 19.03.2022 14:53 taima:
-# class Response(BaseModel):
-#     like: LikeRequest
-#     comment: CommentRequest
-#     fail_request: LikeRequest | CommentRequest
-#     status: bool
-#
-#     def __bool__(self):
-#         return self.status
+    def get_answer(self) -> str:
+        match self.is_liked, self.is_commented:
+            case False, False:
+                answer = f"Поставить лайк и написать комментарий "
+            case False, True:
+                answer = f"Поставить лайк "
+            case _:
+                answer = f"Написать комментарий "
+        answer += self.url
+        return answer
 
 
 async def parse_url(url: str) -> Optional[Request]:
@@ -94,20 +74,3 @@ async def parse_url(url: str) -> Optional[Request]:
             "item_id": item_id,
         }
         return Request(like=LikeRequest(**fields), comment=CommentRequest(**fields), url=url)
-
-
-async def parse_checker_user(text, checker) -> Optional[int]:
-    checker_data = re.findall(r"!!.*vk.com/(.*)", text)
-    if checker_data:
-        res = await checker.api.users.get(user_ids=checker_data[0])
-        return res[0]["id"]
-
-
-if __name__ == "__main__":
-    c = CommentRequest(name="asd", url="asd", user_id=1, owner_id=1, item_id=3)
-    l = LikeRequest(type="post", url="asd", user_id=1, owner_id=1, item_id=3)
-    r = Request(url="asd", like=l, comment=c)
-    # print(r.dict())
-    res = Response(url=1, is_liked=True, is_commented=False)
-
-    print(res)

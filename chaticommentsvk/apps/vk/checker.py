@@ -1,16 +1,18 @@
 import asyncio
 import functools
+import re
 import typing
 
 from aiovk import API, TokenSession
 from loguru import logger
 
 from chaticommentsvk.apps.vk.classes import CommentRequest, LikeRequest, Request, Response
+from chaticommentsvk.config.config import config
+from chaticommentsvk.db.db_main import redis
+
+
 # todo 18.03.2022 16:45 taima: Получить идентификатор комментария
 # todo 18.03.2022 16:49 taima: Проверять текст комментария
-from chaticommentsvk.config.config import config
-
-
 class VkChecker:
     def __init__(self, token, loop=None):
         # self.driver = HttpDriver(loop=loop) if loop else None
@@ -21,21 +23,22 @@ class VkChecker:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        logger.debug("Закрытые сессии")
+        logger.trace("Закрытые сессии")
         await self.session.close()
+
+    async def parse_checker_user(self, text) -> typing.Optional[int]:
+        checker_data = re.findall(r"!!.*vk.com/(.*)", text)
+        if checker_data:
+            res = await self.api.users.get(user_ids=checker_data[0])
+            return res[0]["id"]
 
     # todo 18.03.2022 17:57 taima: добавить проверку репоста
     async def is_liked(self, user_id, like: LikeRequest) -> bool:
         """Проверка лайка"""
         response = await self.api.likes.isLiked(user_id=user_id, **like.dict())
         logger.trace(f"Запрос is_liked|{response}")
-        # is_successfully = bool(response["liked"])
+        await redis.incr("is_liked_requests")
         return bool(response["liked"])
-        # if is_successfully:
-        #     return SuccessfullyResponse(**like.dict())
-        # return UnsuccessfulResponse(**like.dict())
-
-        # return response
 
     # todo 18.03.2022 19:08 taima: добавить проверку комментария
     @staticmethod
@@ -46,14 +49,9 @@ class VkChecker:
         """Проверка комментария"""
         response = await self.api.wall.getComments(user_id=user_id, **comment.dict(exclude={"user_id"}))
         logger.trace(f"Запрос is_commented|{response}")
-        # func = functools.partial(self._checking_comment, user_id)
         func = functools.partial(lambda us_id, com_obj: bool(us_id == com_obj["from_id"]), user_id)
-        # is_successfully = any(map(func, response["items"]))
+        await redis.incr("is_commented_requests")
         return any(map(func, response["items"]))
-
-        # if is_successfully:
-        #     return SuccessfullyResponse(**comment.dict())
-        # return UnsuccessfulResponse(**comment.dict())
 
     async def is_liked_commented(self, user_id, request: Request) -> Response:
         """Проверка комментария и лайка"""
@@ -67,9 +65,9 @@ class VkChecker:
         )
 
     async def send_request(
-            self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
+        self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
     ) -> Response:
-
+        """Проверка определенного типа запроса"""
         is_liked, is_commented = True, True
         if check_type == "like":
             is_liked = await self.is_liked(user_id, request.like)

@@ -1,8 +1,23 @@
 import asyncio
 
+from aiogram import types
 from loguru import logger
 
+from chaticommentsvk.db.db_main import DelMessage, redis
 from chaticommentsvk.loader import TempData, bot
+
+
+async def message_controller(message: types.Message, answer: str, **kwargs):
+    """Удаление лишних сообщений из чата"""
+    await message.delete()
+    new_message = await message.answer(answer, **kwargs)
+
+    del_message = DelMessage(chat_id=new_message.chat.id, message_id=new_message.message_id)
+    old_data = await redis.getset(f"message_{del_message.chat_id}", del_message.json())
+    if old_data:
+        old_message = DelMessage.parse_raw(old_data)
+        logger.trace(f"Удаление {old_message}")
+        await bot.delete_message(**old_message.dict())
 
 
 async def pre_message_process(message):
