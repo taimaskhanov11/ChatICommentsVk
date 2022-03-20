@@ -1,18 +1,23 @@
 bot:
   # telegram bot token
-  token:
+  token: your_tg_bot_token
+
   # telegram admins user_ids
   admins:
     - 12345689
     - 000000000
 
+  # Тип проверки постов
   # like | comment | like_comment
   check_type: like
+  # Длинна очереди
   queue_length: 5
 
 vk:
-  # vk api account token
-  token:
+  # vk api account token Можно получить https://vkhost.github.io/.
+  # Нажимаем на настройки, выделяем все права, нажимаем на получить
+  # Нажимаем разрешить, Выделяем из адресной строки ключ от access_token= до &
+  token: your_vk_token
 
 db:
   type: redis
