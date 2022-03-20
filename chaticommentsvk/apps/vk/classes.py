@@ -4,30 +4,30 @@ import typing
 from pydantic import BaseModel, Field, validator
 from pydantic.dataclasses import Optional
 
+# class BaseRequest(BaseModel):
+#     type: #typing.Literal["post", "photo"]
+#     owner_id: int
+#     item_id: int
+
 
 class LikeRequest(BaseModel):
-    # url: str
+    """Запрос на проверку лайка"""
+
     type: typing.Literal["post", "photo"]
-    # user_id: int
     owner_id: int
     item_id: int
 
-    # todo 19.03.2022 15:33 taima: добавить проверку остаьных полей
-    # def __eq__(self, other):
-    #     if isinstance(other, LikeRequest):
-    #         return bool(self.url == other.url)
-    #     return False
 
+class CommentRequest(LikeRequest):
+    """Запрос на проверку комментария"""
 
-class CommentRequest(BaseModel):
-    # user_id: int
-    # url: str
-    owner_id: int
-    post_id: int = Field(alias="item_id")
-    count: int = 50
+    count: Optional[int] = 50
+    photo_id: Optional[int] = Field(const=True)
+    post_id: Optional[int] = Field(const=True)
 
-    class Config:
-        allow_population_by_field_name = True
+    @validator("photo_id", "post_id", always=True)
+    def get_item_id(cls, value, values):
+        return values.get("item_id")
 
 
 class Request(BaseModel):
@@ -40,6 +40,25 @@ class Request(BaseModel):
             return bool(self.url == other.url)
         return False
 
+    @classmethod
+    async def parse_url(cls, url: str) -> Optional["Request"]:
+        # data: list[str] = re.findall(r"wall(.*)", url)
+        data: list[str] = re.findall(r"(\bwall|\bphoto)(-?\d+_\d+)", url)
+        if len(data) == 1:
+            _type, item_data = data[0][0], data[0][1].split("_")
+            owner_id, item_id = item_data
+            item_type = "post" if _type == "wall" else _type
+            fields = {
+                "type": item_type,
+                "owner_id": owner_id,
+                "item_id": item_id,
+            }
+            return cls(
+                like=LikeRequest(**fields),
+                comment=CommentRequest(**fields),
+                url=f"https://vk.com/{_type}{owner_id}_{item_id}",
+            )
+
 
 class Response(BaseModel):
     url: str
@@ -51,7 +70,8 @@ class Response(BaseModel):
     def __bool__(self):
         return self.is_successfully
 
-    def get_answer(self) -> str:
+    @property
+    def unfulfilled(self) -> str:
         match self.is_liked, self.is_commented:
             case False, False:
                 answer = f"Поставить лайк и написать комментарий "
@@ -63,14 +83,8 @@ class Response(BaseModel):
         return answer
 
 
-async def parse_url(url: str) -> Optional[Request]:
-    data: list[str] = re.findall(r"wall(.*)", url)
-    if len(data) == 1:
-        owner_id, item_id = data[0].split("_")
-        fields = {
-            "type": "post",
-            # "user_id": user_id,
-            "owner_id": owner_id,
-            "item_id": item_id,
-        }
-        return Request(like=LikeRequest(**fields), comment=CommentRequest(**fields), url=url)
+if __name__ == "__main__":
+    b = CommentRequest(type="photo", owner_id=1, item_id=1, photo_id=1)
+    print(b.dict(exclude_defaults=False))
+    print(b.photo_id)
+    b.photo_id = 2

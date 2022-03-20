@@ -1,6 +1,5 @@
 import asyncio
 
-import aioredis
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 

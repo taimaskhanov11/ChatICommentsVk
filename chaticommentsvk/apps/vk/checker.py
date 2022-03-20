@@ -4,6 +4,7 @@ import re
 import typing
 
 from aiovk import API, TokenSession
+from aiovk.exceptions import VkAPIError
 from loguru import logger
 
 from chaticommentsvk.apps.vk.classes import CommentRequest, LikeRequest, Request, Response
@@ -26,8 +27,24 @@ class VkChecker:
         logger.trace("Закрытые сессии")
         await self.session.close()
 
-    async def parse_checker_user(self, text) -> typing.Optional[int]:
-        checker_data = re.findall(r"!!.*vk.com/(.*)", text)
+    async def is_access(
+        self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
+    ) -> bool:
+        try:
+            if check_type == "like":
+                await self.is_liked(user_id, request.like)
+            elif check_type == "comment":
+                await self.is_commented(user_id, request.comment)
+            else:
+                await asyncio.gather(self.is_liked(user_id, request.like), self.is_commented(user_id, request.comment))
+            return True
+        except VkAPIError as e:
+            logger.warning(f"{request}|{e}")
+            return False
+
+    async def other_user(self, text) -> typing.Optional[int]:
+        """Проверка на запрос от лица другого пользователя"""
+        checker_data = re.findall(r"!!.*vk.com/(.+)", text)
         if checker_data:
             res = await self.api.users.get(user_ids=checker_data[0])
             return res[0]["id"]
@@ -47,7 +64,10 @@ class VkChecker:
 
     async def is_commented(self, user_id, comment: CommentRequest) -> bool:
         """Проверка комментария"""
-        response = await self.api.wall.getComments(user_id=user_id, **comment.dict(exclude={"user_id"}))
+
+        method = self.api.__getattr__("photos") if comment.type == "photo" else self.api.__getattr__("wall")
+        response = await method.getComments(user_id=user_id, **comment.dict())
+
         logger.trace(f"Запрос is_commented|{response}")
         func = functools.partial(lambda us_id, com_obj: bool(us_id == com_obj["from_id"]), user_id)
         await redis.incr("is_commented_requests")
@@ -69,6 +89,7 @@ class VkChecker:
     ) -> Response:
         """Проверка определенного типа запроса"""
         is_liked, is_commented = True, True
+
         if check_type == "like":
             is_liked = await self.is_liked(user_id, request.like)
         elif check_type == "comment":
@@ -112,12 +133,29 @@ async def main():
     # user_id = 222256657
     # url = "https://vk.com/wall312730516_631"
     checker = VkChecker(config.vk.token)
+    "https://vk.com/ekatherinesh?z=photo41791144_456245793%2Falbum41791144_00%2Frev"
+    "https://vk.com/wall41791144_14685"
+    "https://vk.com/wall1_2442097"
+    "https://vk.com/osa145188?z=photo583757810_457256930%2Falbum583757810_0%2Frev"
+    "https://vk.com/we_use_django?w=wall-149218373_9938"
+    # res1 = await checker.api.likes.getList(type="photo", owner_id=41791144, item_id=456245793)
+    # res2 = await checker.api.likes.getList(type="post", owner_id=41791144, item_id=14685)
+    # res1 = await checker.api.likes.getList(type="photo", owner_id=583757810, item_id=457256930)
+    # res2 = await checker.api.likes.getList(type="post", owner_id=583757810, item_id=1496)
+    # res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=-149218373, post_id=9938)
+    res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=149218373, item_id=9938)
+
+    "https://vk.com/we_use_django?w=wall-149218373_9938"
+    "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"
+
+    print(res2)
+    # print(res2)
     # like, comment = parse_url(url)
     # # res = await checker.is_liked(, *parse_url("https://vk.com/wall312730516_631"))
     # res = await checker.is_commented(user_id, comment)
     #
     # pprint(res)
-    print(await checker.api.users.get(user_ids="id408048349"))
+    # print(await checker.api.users.get(user_ids="id408048349"))
     await checker.session.close()
 
 

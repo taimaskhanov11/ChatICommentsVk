@@ -1,5 +1,4 @@
 import typing
-from collections import deque
 from pathlib import Path
 from typing import Optional
 
@@ -9,8 +8,8 @@ from pydantic import BaseModel
 BASE_DIR = Path(__file__).parent.parent.parent
 
 
-def load_config() -> dict:
-    with open(Path(BASE_DIR, "config.yml"), "r", encoding="utf-8") as f:
+def load_yaml(file) -> dict:
+    with open(Path(BASE_DIR, file), "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -36,4 +35,4 @@ class Config(BaseModel):
     db: Database
 
 
-config = Config(**load_config())
+config = Config(**load_yaml("config_dev.yml"))

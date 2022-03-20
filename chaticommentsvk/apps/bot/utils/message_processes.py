@@ -10,7 +10,7 @@ from chaticommentsvk.loader import TempData, bot
 async def message_controller(message: types.Message, answer: str, **kwargs):
     """Удаление лишних сообщений из чата"""
     await message.delete()
-    new_message = await message.answer(answer, **kwargs)
+    new_message = await message.answer(answer.format(username=message.from_user.username), **kwargs)
 
     del_message = DelMessage(chat_id=new_message.chat.id, message_id=new_message.message_id)
     old_data = await redis.getset(f"message_{del_message.chat_id}", del_message.json())
