@@ -4,7 +4,7 @@ from aiogram import types
 from loguru import logger
 
 from chaticommentsvk.db.db_main import DelMessage, redis
-from chaticommentsvk.loader import TempData, bot
+from chaticommentsvk.loader import bot
 
 
 async def message_controller(message: types.Message, answer: str, **kwargs):

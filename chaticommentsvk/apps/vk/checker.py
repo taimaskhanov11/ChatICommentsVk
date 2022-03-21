@@ -30,13 +30,18 @@ class VkChecker:
     async def is_access(
         self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
     ) -> bool:
+        """Проверка доступности поста"""
         try:
+            method = self.api.__getattr__("photos") if request.comment.type == "photo" else self.api.__getattr__("wall")
             if check_type == "like":
-                await self.is_liked(user_id, request.like)
+                await self.api.likes.getList(**request.like.dict())
             elif check_type == "comment":
-                await self.is_commented(user_id, request.comment)
+                await method.getComments(user_id=user_id, **request.comment.dict())
             else:
-                await asyncio.gather(self.is_liked(user_id, request.like), self.is_commented(user_id, request.comment))
+                await asyncio.gather(
+                    self.api.likes.getList(**request.like.dict()),
+                    method.getComments(user_id=user_id, **request.comment.dict()),
+                )
             return True
         except VkAPIError as e:
             logger.warning(f"{request}|{e}")
@@ -143,7 +148,8 @@ async def main():
     # res1 = await checker.api.likes.getList(type="photo", owner_id=583757810, item_id=457256930)
     # res2 = await checker.api.likes.getList(type="post", owner_id=583757810, item_id=1496)
     # res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=-149218373, post_id=9938)
-    res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=149218373, item_id=9938)
+    # res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
+    res2 = await checker.api.likes.getList(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
 
     "https://vk.com/we_use_django?w=wall-149218373_9938"
     "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"

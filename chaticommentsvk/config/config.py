@@ -18,6 +18,8 @@ class Bot(BaseModel):
     check_type: typing.Literal["like", "comment", "like_comment"]
     queue_length: int
     admins: Optional[list[int]]
+    vip: Optional[list[int]]
+    startup_clear: bool
 
 
 class Vk(BaseModel):
@@ -25,7 +27,7 @@ class Vk(BaseModel):
 
 
 class Database(BaseModel):
-    type: str
+    storage: str
     host: str
 
 

@@ -15,4 +15,4 @@ settings_menu = InlineKeyboardMarkup(
     inline_keyboard=_setting_menu_buttons,
 )
 
-post_type = ReplyKeyboardMarkup([["like"], ["comment"], ["like_comment"]], resize_keyboard=True)
+post_type = ReplyKeyboardMarkup([["like", "comment"], ["like_comment"]], resize_keyboard=True)
