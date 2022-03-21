@@ -52,6 +52,7 @@ async def all_text(message: types.Message, new_request: Request):
                     for task in unfinished_tasks:
                         # todo 19.03.2022 21:25 taima: пофиксить проверку
                         unfulfilled_s += f"{task.unfulfilled}\n"
+                    # await message.answer(unfulfilled_s, disable_web_page_preview=True)
                     await message_controller(message, unfulfilled_s, disable_web_page_preview=True)
 
                 # Если лайк или комментарий найден добавляем в список

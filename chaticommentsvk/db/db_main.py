@@ -13,7 +13,7 @@ from chaticommentsvk.config.config import config
 class DelMessage(BaseModel):
     chat_id: int
     message_id: int
-
+    user_id:int
 
 obj = Request(
     like=LikeRequest(type="post", owner_id=624187368, item_id=385),
