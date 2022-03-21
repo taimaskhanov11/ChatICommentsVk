@@ -13,10 +13,12 @@ async def message_controller(message: types.Message, answer: str, **kwargs):
     new_message = await message.answer(answer.format(username=message.from_user.username), **kwargs)
 
     del_message = DelMessage(chat_id=new_message.chat.id, message_id=new_message.message_id,
-                             user_id=new_message.from_user.id)
+                             user_id=message.from_user.id)
     old_data = await redis.getset(f"message_{del_message.user_id}", del_message.json())
     if old_data:
         old_message = DelMessage.parse_raw(old_data)
+        logger.debug(f"Сообщение для удаления {old_message} -- "
+                     f"Полученное сообщение {message.from_user.id}|{message.chat.id}|{message.message_id}")
         logger.trace(f"Удаление {old_message}")
         await bot.delete_message(**old_message.dict(exclude={"user_id"}))
 
