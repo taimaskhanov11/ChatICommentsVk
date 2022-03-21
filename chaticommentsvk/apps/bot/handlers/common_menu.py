@@ -28,6 +28,7 @@ async def all_text(message: types.Message, new_request: Request):
             checker_user = await vk_checker.other_user(message.text) or new_request.like.owner_id
 
             # Проверка доступности
+            logger.debug(f"Проверка доступности {new_request}")
             if not await vk_checker.is_access(checker_user, config.bot.check_type, new_request):
                 await message_controller(message, answer.common.no_access)
 

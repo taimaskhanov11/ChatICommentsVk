@@ -27,7 +27,7 @@ async def bot_settings_menu(message: types.Message, state: FSMContext):
 
 
 async def edit_queue_length(call: types.CallbackQuery):
-    await call.message.answer("Изменение длинны очистит текущие посты\n" "Введите новую длину очереди")
+    await call.message.answer("Изменение длинны очистит текущие посты\nВведите новую длину очереди")
     await EditSetStatesGroup.queue_length.set()
 
 
@@ -38,7 +38,7 @@ async def edit_queue_length_end(message: types.Message, state: FSMContext):
         config.bot.queue_length = int(message.text)
         temp.current_posts = deque(maxlen=int(message.text))
         await message.answer(
-            "Длинна очереди успешно обновлена\n{settings_status()}", reply_markup=markups.settings_menu
+            f"Длинна очереди успешно обновлена\n{settings_status()}", reply_markup=markups.settings_menu
         )
     else:
         await message.answer("Неправильный ввод, повторите попытку")
