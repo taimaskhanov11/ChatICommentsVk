@@ -36,7 +36,7 @@ async def edit_queue_length_end(message: types.Message, state: FSMContext):
     if message.text.isdigit():
         await state.finish()
         config.bot.queue_length = int(message.text)
-        temp.current_posts = deque([obj], maxlen=int(message.text))
+        temp.current_posts = deque(maxlen=int(message.text))
         await message.answer(
             "Длинна очереди успешно обновлена\n{settings_status()}", reply_markup=markups.settings_menu
         )

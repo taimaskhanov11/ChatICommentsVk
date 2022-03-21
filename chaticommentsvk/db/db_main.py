@@ -26,7 +26,7 @@ class temp:
     pre_message = {}
     message_queue = asyncio.Queue()
     pre_message_task: dict[int, tuple[types.Message, asyncio.Task]] = {}
-    current_posts = deque([obj], maxlen=config.bot.queue_length)
+    current_posts = deque( maxlen=config.bot.queue_length)
 
 
 class DummyRedis:
