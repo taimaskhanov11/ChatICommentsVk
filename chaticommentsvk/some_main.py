@@ -20,6 +20,7 @@ async def set_commands(bot: Bot):
 
 async def main(config_path):
     from chaticommentsvk.config import config
+
     config.config = Config(**load_yaml(config_path))
     from loguru import logger
     from chaticommentsvk.apps.bot.handlers.admin_handlers.admin_commands import register_admin_commands_handlers
@@ -77,5 +78,5 @@ def processes_start():
         Process(target=process_main, args=(config_file,)).start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     processes_start()

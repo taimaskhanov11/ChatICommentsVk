@@ -1,7 +1,6 @@
 from chaticommentsvk.config.config import config
 
 
-
 def settings_status():
     return f"Длинна очереди:{config.bot.queue_length}\n" f"Тип постов: {config.bot.check_type}\n"
 

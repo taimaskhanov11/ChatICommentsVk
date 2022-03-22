@@ -13,7 +13,8 @@ from chaticommentsvk.config.config import config
 class DelMessage(BaseModel):
     chat_id: int
     message_id: int
-    user_id:int
+    user_id: int
+
 
 obj = Request(
     like=LikeRequest(type="post", owner_id=624187368, item_id=385),
@@ -26,7 +27,7 @@ class temp:
     pre_message = {}
     message_queue = asyncio.Queue()
     pre_message_task: dict[int, tuple[types.Message, asyncio.Task]] = {}
-    current_posts = deque( maxlen=config.bot.queue_length)
+    current_posts = deque(maxlen=config.bot.queue_length)
 
 
 class DummyRedis:

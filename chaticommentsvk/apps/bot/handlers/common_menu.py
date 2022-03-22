@@ -10,6 +10,7 @@ from chaticommentsvk.apps.vk.classes import Request, Response
 from chaticommentsvk.config.answer import answer
 from chaticommentsvk.config.config import config
 from chaticommentsvk.db.db_main import temp, redis
+
 # todo 19.03.2022 13:30 taima: удаление сообщений после определенного времени
 # todo 19.03.2022 13:33 taima: проверять какие задания выполнены какие нет
 # todo 19.03.2022 12:47 taima:
