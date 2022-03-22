@@ -13,13 +13,13 @@ class AdminSuperGroupFilter(BoundFilter):
 class AdminPrivateFilter(BoundFilter):
     async def check(self, obj: types.Message | types.CallbackQuery):
         if isinstance(obj, types.Message):
-            obj = obj.chat
+            chat = obj.chat
         elif isinstance(obj, types.CallbackQuery):
-            obj = obj.message.chat
+            chat = obj.message.chat
         elif isinstance(obj, types.ChatMemberUpdated):
-            obj = obj.chat
+            chat = obj.chat
         else:
             logger.warning("Непредвиденная ошибка")
             return False
-        if obj.type == ChatType.PRIVATE and obj.id in config.bot.admins:
+        if chat.type == ChatType.PRIVATE and obj.from_user.id in config.bot.admins:
             return True
