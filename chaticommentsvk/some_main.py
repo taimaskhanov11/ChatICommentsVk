@@ -26,7 +26,6 @@ async def main(config_path):
     from chaticommentsvk.apps.bot.handlers.admin_handlers.bot_settings import register_bot_settings_handlers
     from chaticommentsvk.apps.bot.handlers.admin_handlers.privilege_settings import register_privilege_handlers
     from chaticommentsvk.apps.bot.handlers.common_menu import register_common_handlers
-    from chaticommentsvk.config.config import config
     from chaticommentsvk.db.db_main import redis
     from chaticommentsvk.loader import bot, dp
 
@@ -34,7 +33,7 @@ async def main(config_path):
     init_logging(filename=config_path.stem, old_logger=True, level=logging.INFO, steaming=True)
     logger.trace(f"Starting bot {(await bot.get_me()).username}")
     # Очистка базы перед запуском
-    if config.bot.startup_clear:
+    if config.config.bot.startup_clear:
         await redis.flushall()
 
     # Установка команд бота
