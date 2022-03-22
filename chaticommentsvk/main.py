@@ -10,7 +10,7 @@ from chaticommentsvk.apps.bot.handlers.admin_handlers.bot_settings import regist
 from chaticommentsvk.apps.bot.handlers.admin_handlers.privilege_settings import register_privilege_handlers
 from chaticommentsvk.apps.bot.handlers.common_menu import register_common_handlers
 from chaticommentsvk.apps.bot.utils.message_processes import message_delete_worker
-from chaticommentsvk.config import config
+from chaticommentsvk.config.config import config
 from chaticommentsvk.config.log_settings import init_logging
 from chaticommentsvk.db.db_main import redis
 from chaticommentsvk.loader import bot, dp
@@ -26,10 +26,7 @@ async def set_commands(bot: Bot):
 async def main():
     # Настройка логирования
     init_logging(old_logger=True, level=logging.INFO, steaming=True)
-    logger.info("Starting bot")
-
-    print((await bot.get_me()).username)
-
+    logger.info(f"Starting bot {(await bot.get_me()).username}")
     # Очистка базы перед запуском
     if config.bot.startup_clear:
         await redis.flushall()

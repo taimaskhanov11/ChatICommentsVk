@@ -8,8 +8,8 @@ from loguru import logger
 from chaticommentsvk.apps.bot import markups
 from chaticommentsvk.apps.bot.filters.admin_filters import AdminPrivateFilter
 from chaticommentsvk.apps.bot.utils.admin_helpers import settings_status
-from chaticommentsvk.config import config
-from chaticommentsvk.db.db_main import temp, obj
+from chaticommentsvk.config.config import config
+from chaticommentsvk.db.db_main import temp
 
 
 class EditSetStatesGroup(StatesGroup):

@@ -2,7 +2,6 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
-from chaticommentsvk.apps.vk.checker import VkChecker
 from chaticommentsvk.config.config import config
 
 bot = Bot(token=config.bot.token)

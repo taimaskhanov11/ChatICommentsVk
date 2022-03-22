@@ -10,12 +10,12 @@ LOG_DIR = Path(Path(BASE_DIR, "logs"))
 LOG_DIR.mkdir(exist_ok=True)
 
 
-def init_logging(old_logger=True, level=logging.INFO, steaming=True):
+def init_logging(filename="", old_logger=True, level=logging.INFO, steaming=True):
     log.remove()
     if steaming:
         log.add(sink=sys.stderr, level="TRACE", enqueue=True, diagnose=True)
     log.add(
-        sink=Path(LOG_DIR, "main.log"),
+        sink=Path(LOG_DIR, f"main_{filename}.log"),
         level="TRACE",
         enqueue=True,
         encoding="utf-8",
@@ -24,7 +24,7 @@ def init_logging(old_logger=True, level=logging.INFO, steaming=True):
         compression="zip",
     )
     if old_logger:
-        handlers = [logging.FileHandler(filename=Path(LOG_DIR, "aiogram.log"), encoding="utf-8")]
+        handlers = [logging.FileHandler(filename=Path(LOG_DIR, f"aiogram_{filename}.log"), encoding="utf-8")]
         if steaming:
             handlers.append(logging.StreamHandler())
         logging.basicConfig(

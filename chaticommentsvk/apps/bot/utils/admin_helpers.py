@@ -1,4 +1,5 @@
-from chaticommentsvk.config import config
+from chaticommentsvk.config.config import config
+
 
 
 def settings_status():

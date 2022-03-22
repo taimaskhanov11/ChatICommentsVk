@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import BoundFilter, ChatTypeFilter
 from aiogram.types import ChatType
 from loguru import logger
 
-from chaticommentsvk.config import config
+from chaticommentsvk.config.config import config
 
 
 class AdminSuperGroupFilter(BoundFilter):

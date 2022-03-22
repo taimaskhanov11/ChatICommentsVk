@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from chaticommentsvk.apps.bot import markups
 from chaticommentsvk.apps.bot.utils.admin_helpers import admin_vips_status
-from chaticommentsvk.config import config
+from chaticommentsvk.config.config import config
 
 
 class AdminSetStatesGroup(StatesGroup):
