@@ -2,6 +2,7 @@ from aiogram import Dispatcher, types
 from aiogram.types import ChatType
 from loguru import logger
 
+from chaticommentsvk.apps.bot.filters.admin_filters import AdminSuperGroupFilter
 from chaticommentsvk.apps.bot.filters.common_menu_filters import PostLinkFilter
 from chaticommentsvk.apps.bot.utils.message_processes import message_controller
 from chaticommentsvk.apps.bot.utils.request_helpers import send_check_request
@@ -75,5 +76,5 @@ async def admin_text(message: types.Message):
 
 
 def register_common_handlers(dp: Dispatcher):
-    dp.register_message_handler(admin_text, user_id=config.bot.admins, chat_type=ChatType.SUPERGROUP)
+    dp.register_message_handler(admin_text, AdminSuperGroupFilter(), chat_type=ChatType.SUPERGROUP)
     dp.register_message_handler(all_text, PostLinkFilter(), chat_type=ChatType.SUPERGROUP)

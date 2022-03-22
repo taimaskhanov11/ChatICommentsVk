@@ -7,7 +7,9 @@ from chaticommentsvk.config.config import config
 
 
 class AdminSuperGroupFilter(BoundFilter):
-    pass
+    async def check(self, obj):
+        if obj.from_user.id in config.bot.admins:
+            return True
 
 
 class AdminPrivateFilter(BoundFilter):
@@ -22,4 +24,5 @@ class AdminPrivateFilter(BoundFilter):
             logger.warning("Непредвиденная ошибка")
             return False
         if chat.type == ChatType.PRIVATE and obj.from_user.id in config.bot.admins:
+            logger.info(f"Админ {obj.from_user.id}")
             return True
