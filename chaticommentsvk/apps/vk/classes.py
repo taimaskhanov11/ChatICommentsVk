@@ -4,6 +4,7 @@ import typing
 from pydantic import BaseModel, Field, validator
 from pydantic.dataclasses import Optional
 
+
 # class BaseRequest(BaseModel):
 #     type: #typing.Literal["post", "photo"]
 #     owner_id: int
@@ -50,8 +51,8 @@ class Request(BaseModel):
             item_type = "post" if _type == "wall" else _type
             fields = {
                 "type": item_type,
-                "owner_id": owner_id,
-                "item_id": item_id,
+                "owner_id": owner_id.strip(),
+                "item_id": item_id.strip(),
             }
             return cls(
                 like=LikeRequest(**fields),
