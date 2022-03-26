@@ -18,7 +18,7 @@ from chaticommentsvk.db.db_main import temp, redis
 from chaticommentsvk.loader import bot
 
 
-@logger.catch
+# @logger.catch
 async def all_text(message: types.Message, new_request: Request):
     try:
         logger.trace(temp.current_posts)
@@ -29,7 +29,7 @@ async def all_text(message: types.Message, new_request: Request):
             checker_user = await vk_checker.other_user(message.text) or new_request.like.owner_id
 
             # Проверка доступности
-            logger.debug(f"Проверка доступности {new_request}")
+            logger.debug(f"Проверка доступности поста {new_request}")
             if not await vk_checker.is_access(checker_user, config.bot.check_type, new_request):
                 await message_controller(message, answer.common.no_access)
 
@@ -64,7 +64,8 @@ async def all_text(message: types.Message, new_request: Request):
                     temp.current_posts.append(new_request)
 
     except Exception as e:
-        logger.critical(e)
+        await message_controller(message, answer.common.no_access)
+        logger.exception(e)
         for admin in config.bot.admins:
             await bot.send_message(admin, f"{answer.common.error}\n{message.text}")
         # await message_controller(message, answer.common.error)

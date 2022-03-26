@@ -31,7 +31,7 @@ async def main(config_path):
     from chaticommentsvk.loader import bot, dp
 
     # Настройка логирования
-    init_logging(filename=config_path.stem, old_logger=True, level=logging.INFO, steaming=True)
+    init_logging(filename=config_path.stem, old_logger=True, level=logging.DEBUG, steaming=False)
     logger.trace(f"Starting bot {(await bot.get_me()).username}")
     # Очистка базы перед запуском
     if config.config.bot.startup_clear:

@@ -28,7 +28,7 @@ class VkChecker:
         await self.session.close()
 
     async def is_access(
-        self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
+            self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
     ) -> bool:
         """Проверка доступности поста"""
         try:
@@ -49,9 +49,10 @@ class VkChecker:
 
     async def other_user(self, text) -> typing.Optional[int]:
         """Проверка на запрос от лица другого пользователя"""
-        checker_data = re.findall(r"!!.*vk.com/(.+)", text)
+        checker_data: list[str] = re.findall(r"!!.*vk.com/(.+)", text)
         if checker_data:
-            res = await self.api.users.get(user_ids=checker_data[0])
+            res = await self.api.users.get(user_ids=checker_data[0].strip())
+            logger.trace(res)
             return res[0]["id"]
 
     # todo 18.03.2022 17:57 taima: добавить проверку репоста
@@ -90,7 +91,7 @@ class VkChecker:
         )
 
     async def send_request(
-        self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
+            self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
     ) -> Response:
         """Проверка определенного типа запроса"""
         is_liked, is_commented = True, True
@@ -149,7 +150,8 @@ async def main():
     # res2 = await checker.api.likes.getList(type="post", owner_id=583757810, item_id=1496)
     # res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=-149218373, post_id=9938)
     # res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
-    res2 = await checker.api.likes.getList(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
+    # res2 = await checker.api.likes.getList(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
+    res2 = await checker.api.users.get(user_ids="id204982390")
 
     "https://vk.com/we_use_django?w=wall-149218373_9938"
     "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"
