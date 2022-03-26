@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from loguru import logger
 
 from chaticommentsvk.apps.bot import markups
+from chaticommentsvk.apps.bot.filters.admin_filters import AdminPrivateFilter
 from chaticommentsvk.apps.bot.utils.queue_helpers import send_current_queues
 from chaticommentsvk.apps.vk.classes import Request
 from chaticommentsvk.db.db_main import temp
@@ -56,7 +57,7 @@ async def delete_post(call: types.CallbackQuery):
 
 
 def register_customize_queue_handlers(dp: Dispatcher):
-    dp.register_message_handler(customize_queue_menu, text_startswith="🔩", state="*")
-    dp.register_callback_query_handler(delete_post, text_startswith="delete_post")
-    dp.register_callback_query_handler(add_post_start, text_startswith="add_post")
-    dp.register_message_handler(add_post, state=AddPostGroupStates)
+    dp.register_message_handler(customize_queue_menu, AdminPrivateFilter(), text_startswith="🔩", state="*")
+    dp.register_callback_query_handler(delete_post, AdminPrivateFilter(), text_startswith="delete_post")
+    dp.register_callback_query_handler(add_post_start, AdminPrivateFilter(), text_startswith="add_post")
+    dp.register_message_handler(add_post, AdminPrivateFilter(), state=AddPostGroupStates)

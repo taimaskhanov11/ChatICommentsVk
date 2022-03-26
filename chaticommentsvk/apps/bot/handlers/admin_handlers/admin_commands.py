@@ -36,6 +36,7 @@ def register_admin_commands_handlers(dp: Dispatcher):
         statistics,
         AdminPrivateFilter(),
         text_startswith="📉",
+        state="*"
     )
     # dp.register_message_handler(
     #     admin_start,

@@ -64,6 +64,7 @@ def register_bot_settings_handlers(dp: Dispatcher):
         bot_settings_menu,
         AdminPrivateFilter(),
         text_startswith="⚙",
+        state="*"
     )
 
     dp.register_callback_query_handler(
