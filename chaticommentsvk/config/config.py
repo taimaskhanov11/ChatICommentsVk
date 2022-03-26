@@ -20,6 +20,7 @@ class Bot(BaseModel):
     admins: Optional[list[int]]
     vip: Optional[list[int]]
     startup_clear: bool
+    dd_messages: int
 
 
 class Vk(BaseModel):
@@ -37,4 +38,4 @@ class Config(BaseModel):
     db: Database
 
 
-config = Config(**load_yaml("config.yml"))
+config = Config(**load_yaml("config_dev.yml"))

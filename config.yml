@@ -4,10 +4,12 @@ bot:
 
   # telegram admins user_ids
   admins:
+    - 0
     - 1985947355
     - 471284384
   # vip users. don't check actions
   vip:
+    - 0
     - 269019356
   # Тип проверки постов
   # like | comment | like_comment
@@ -16,6 +18,9 @@ bot:
   queue_length: 5
   # Очистить старые данные при запуске бота. true|false
   startup_clear: false
+
+  # Таймер для удаления лишних сообщений(в секундах)
+  dd_messages: 60
 
 vk:
   # vk api account token Можно получить https://vkhost.github.io/.

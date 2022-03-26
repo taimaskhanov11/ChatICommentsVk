@@ -3,7 +3,8 @@ import asyncio
 from aiogram import types
 from loguru import logger
 
-from chaticommentsvk.db.db_main import DelMessage, redis
+from chaticommentsvk.config.config import config
+from chaticommentsvk.db.db_main import DelMessage, redis, temp
 from chaticommentsvk.loader import bot
 
 
@@ -15,6 +16,7 @@ async def message_controller(message: types.Message, answer: str, **kwargs):
     del_message = DelMessage(
         chat_id=new_message.chat.id, message_id=new_message.message_id, user_id=message.from_user.id
     )
+    asyncio.create_task(delete_message_task(del_message))
     old_data = await redis.getset(f"message_{del_message.user_id}", del_message.json())
     if old_data:
         old_message = DelMessage.parse_raw(old_data)
@@ -22,8 +24,23 @@ async def message_controller(message: types.Message, answer: str, **kwargs):
             f"Сообщение для удаления {old_message} -- "
             f"Полученное сообщение {message.from_user.id}|{message.chat.id}|{message.message_id}"
         )
-        logger.trace(f"Удаление {old_message}")
-        await bot.delete_message(**old_message.dict(exclude={"user_id"}))
+        try:
+            logger.trace(f"Удаление старого {old_message}")
+            await bot.delete_message(**old_message.dict(exclude={"user_id"}))
+            logger.trace(f"Старое сообщение успешно удалено {old_message}")
+        except Exception as e:
+            logger.warning(f"Старое сообщение уже удалено|{e}")
+
+
+async def delete_message_task(del_message: DelMessage):
+    logger.trace(f"В очередь на удаление {del_message}")
+    await asyncio.sleep(config.bot.dd_messages)
+    try:
+        logger.trace(f"Удаление по истечению срока {del_message}")
+        await bot.delete_message(**del_message.dict(exclude={"user_id"}))
+        logger.debug(f"Сообщение {del_message} успешно очищено")
+    except Exception as e:
+        logger.warning(f"{e}|Сообщение по истечению срока уже удалено")
 
 
 async def pre_message_process(message):
@@ -55,7 +72,7 @@ async def message_delete_worker():
     async def delete_message(user_id):
         await asyncio.sleep(10)
         try:
-            message, task = TempData.pre_message_task[user_id]
+            message, task = temp.pre_message_task[user_id]
             await bot.delete_message(message.chat.id, message.message_id)
             del TempData.pre_message_task[user_id]
             # await message.delete()
@@ -65,9 +82,9 @@ async def message_delete_worker():
 
     while True:
         # Вытаскиваем 'рабочий элемент' из очереди.
-        message = await TempData.message_queue.get()
+        message = await temp.message_queue.get()
         # Сообщаем очереди, что 'рабочий элемент' обработан.
-        TempData.pre_message_task[message.from_user.id] = (
+        temp.pre_message_task[message.from_user.id] = (
             message,
             asyncio.create_task(delete_message(message)),
         )

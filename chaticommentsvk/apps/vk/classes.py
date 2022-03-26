@@ -1,6 +1,7 @@
 import re
 import typing
 
+from aiogram import types
 from pydantic import BaseModel, Field, validator
 from pydantic.dataclasses import Optional
 
@@ -35,14 +36,17 @@ class Request(BaseModel):
     url: str
     like: LikeRequest
     comment: CommentRequest
+    chat_id: int
+    message_id: int
 
     def __eq__(self, other):
         if isinstance(other, Request):
-            return bool(self.url == other.url)
-        return False
+            return self.url == other.url
+        return self.url == other
 
     @classmethod
-    async def parse_url(cls, url: str) -> Optional["Request"]:
+    async def parse_url(cls, message: types.Message) -> Optional["Request"]:
+        url = message.text
         # data: list[str] = re.findall(r"wall(.*)", url)
         data: list[str] = re.findall(r"(\bwall|\bphoto)(-?\d+_\d+)", url)
         if len(data) == 1:
@@ -58,6 +62,8 @@ class Request(BaseModel):
                 like=LikeRequest(**fields),
                 comment=CommentRequest(**fields),
                 url=f"https://vk.com/{_type}{owner_id}_{item_id}",
+                chat_id=message.chat.id,
+                message_id=message.message_id,
             )
 
 

@@ -7,6 +7,7 @@ from loguru import logger
 
 from chaticommentsvk.apps.bot.handlers.admin_handlers.admin_commands import register_admin_commands_handlers
 from chaticommentsvk.apps.bot.handlers.admin_handlers.bot_settings import register_bot_settings_handlers
+from chaticommentsvk.apps.bot.handlers.admin_handlers.customize_queue_ import register_customize_queue_handlers
 from chaticommentsvk.apps.bot.handlers.admin_handlers.privilege_settings import register_privilege_handlers
 from chaticommentsvk.apps.bot.handlers.common_menu import register_common_handlers
 from chaticommentsvk.apps.bot.utils.message_processes import message_delete_worker
@@ -33,10 +34,12 @@ async def main():
 
     # Установка команд бота
     await set_commands(bot)
+
     # Меню админа
     register_admin_commands_handlers(dp)
     register_bot_settings_handlers(dp)
     register_privilege_handlers(dp)
+    register_customize_queue_handlers(dp)
 
     # Регистрация хэндлеров
     register_common_handlers(dp)

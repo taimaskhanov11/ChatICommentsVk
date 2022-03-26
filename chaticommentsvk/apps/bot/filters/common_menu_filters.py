@@ -16,7 +16,7 @@ class PostLinkFilter(BoundFilter):
         logger.trace(message)
         await redis.incr("total_messages")
 
-        request = await Request.parse_url(message.text)
+        request = await Request.parse_url(message)
         # Если сообщение успешно запарсено возвращаем объект запроса
         if request:
 

@@ -20,6 +20,8 @@ obj = Request(
     like=LikeRequest(type="post", owner_id=624187368, item_id=385),
     comment=CommentRequest(type="post", owner_id=624187368, item_id=385),
     url="https://vk.com/wall624187368_385",
+    chat_id=1,
+    message_id=2,
 )
 
 
@@ -27,7 +29,7 @@ class temp:
     pre_message = {}
     message_queue = asyncio.Queue()
     pre_message_task: dict[int, tuple[types.Message, asyncio.Task]] = {}
-    current_posts = deque(maxlen=config.bot.queue_length)
+    current_posts: deque[Request] = deque(maxlen=config.bot.queue_length)
 
 
 class DummyRedis:

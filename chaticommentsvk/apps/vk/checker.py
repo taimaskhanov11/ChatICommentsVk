@@ -28,7 +28,7 @@ class VkChecker:
         await self.session.close()
 
     async def is_access(
-            self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
+        self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
     ) -> bool:
         """Проверка доступности поста"""
         try:
@@ -92,7 +92,7 @@ class VkChecker:
         )
 
     async def send_request(
-            self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
+        self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
     ) -> Response:
         """Проверка определенного типа запроса"""
         is_liked, is_commented = True, True
