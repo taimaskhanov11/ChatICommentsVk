@@ -53,7 +53,8 @@ class VkChecker:
         if checker_data:
             res = await self.api.users.get(user_ids=checker_data[0].strip())
             logger.trace(res)
-            return res[0]["id"]
+            if res:
+                return res[0]["id"]
 
     # todo 18.03.2022 17:57 taima: добавить проверку репоста
     async def is_liked(self, user_id, like: LikeRequest) -> bool:

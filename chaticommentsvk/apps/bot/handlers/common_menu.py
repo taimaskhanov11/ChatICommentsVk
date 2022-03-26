@@ -26,7 +26,14 @@ async def all_text(message: types.Message, new_request: Request):
         async with VkChecker(config.vk.token) as vk_checker:
 
             # Получение проверяемого пользователя
+
             checker_user = await vk_checker.other_user(message.text) or new_request.like.owner_id
+
+            if not checker_user:
+                await message_controller(message, "Ошибка при проверке пользователя\n."
+                                                  "Проверьте что ссылка через !! ведена правильно,"
+                                                  " и ведет на страницу пользователя, а не группы")
+                return
 
             # Проверка доступности
             logger.debug(f"Проверка доступности поста {new_request}")
