@@ -10,7 +10,7 @@ from chaticommentsvk.apps.bot.handlers.admin_handlers.bot_settings import regist
 from chaticommentsvk.apps.bot.handlers.admin_handlers.customize_queue_ import register_customize_queue_handlers
 from chaticommentsvk.apps.bot.handlers.admin_handlers.privilege_settings import register_privilege_handlers
 from chaticommentsvk.apps.bot.handlers.common_menu import register_common_handlers
-from chaticommentsvk.apps.bot.utils.message_processes import message_delete_worker
+from chaticommentsvk.apps.bot.handlers.errors_handlers import register_error_handlers
 from chaticommentsvk.config.config import config
 from chaticommentsvk.config.log_settings import init_logging
 from chaticommentsvk.db.db_main import redis
@@ -41,6 +41,8 @@ async def main():
     register_privilege_handlers(dp)
     register_customize_queue_handlers(dp)
 
+    # Хендлер ошибок
+    register_error_handlers(dp)
     # Регистрация хэндлеров
     register_common_handlers(dp)
     # Регистрация middleware

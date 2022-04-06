@@ -45,7 +45,7 @@ class Request(BaseModel):
         return self.url == other
 
     @classmethod
-    async def parse_url(cls, message: types.Message) -> Optional["Request"]:
+    def parse_url(cls, message: types.Message) -> Optional["Request"]:
         url = message.text
         # data: list[str] = re.findall(r"wall(.*)", url)
         data: list[str] = re.findall(r"(\bwall|\bphoto)(-?\d+_\d+)", url)

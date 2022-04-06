@@ -27,9 +27,10 @@ class VkChecker:
         logger.trace("Закрытые сессии")
         await self.session.close()
 
-    async def is_access(
-        self, user_id: int, check_type: typing.Literal["like", "comment", "like_comment"], request: Request
-    ) -> bool:
+    async def is_access(self,
+                        user_id: int,
+                        check_type: typing.Literal["like", "comment", "like_comment"],
+                        request: Request) -> bool:
         """Проверка доступности поста"""
         try:
             method = self.api.__getattr__("photos") if request.comment.type == "photo" else self.api.__getattr__("wall")
@@ -47,7 +48,7 @@ class VkChecker:
             logger.warning(f"{request}|{e}")
             return False
 
-    async def other_user(self, text) -> typing.Optional[int]:
+    async def is_other_user(self, text) -> typing.Optional[int]:
         """Проверка на запрос от лица другого пользователя"""
         checker_data: list[str] = re.findall(r"!!.*vk.com/(.+)", text)
         if checker_data:
@@ -92,7 +93,7 @@ class VkChecker:
         )
 
     async def send_request(
-        self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
+            self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
     ) -> Response:
         """Проверка определенного типа запроса"""
         is_liked, is_commented = True, True
@@ -149,15 +150,16 @@ async def main():
     # res2 = await checker.api.likes.getList(type="post", owner_id=41791144, item_id=14685)
     # res1 = await checker.api.likes.getList(type="photo", owner_id=583757810, item_id=457256930)
     # res2 = await checker.api.likes.getList(type="post", owner_id=583757810, item_id=1496)
-    # res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=-149218373, post_id=9938)
+    "https://vk.com/wall323711139_2920"
+    res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=323711139, post_id=2920)
     # res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
     # res2 = await checker.api.likes.getList(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
-    res2 = await checker.api.users.get(user_ids="id204982390")
-
-    "https://vk.com/we_use_django?w=wall-149218373_9938"
-    "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"
-
+    # res2 = await checker.api.users.get(user_ids="id204982390")
     print(res2)
+    # "https://vk.com/we_use_django?w=wall-149218373_9938"
+    # "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"
+    #
+    # print(res2)
     # print(res2)
     # like, comment = parse_url(url)
     # # res = await checker.is_liked(, *parse_url("https://vk.com/wall312730516_631"))

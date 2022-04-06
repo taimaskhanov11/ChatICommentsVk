@@ -29,7 +29,7 @@ async def add_post_start(call: types.CallbackQuery):
 
 
 async def add_post(message: types.Message, state: FSMContext):
-    request = await Request.parse_url(message)
+    request = Request.parse_url(message)
     if request:
         temp.current_posts.append(request)
         await message.answer("Пост успешно добавлен")
@@ -39,20 +39,27 @@ async def add_post(message: types.Message, state: FSMContext):
 
 
 async def delete_post(call: types.CallbackQuery):
-    url = call.data[12:]
-    for p in temp.current_posts:
-        if url == p:
-            await call.bot.delete_message(p.chat_id, p.message_id)
-            temp.current_posts.remove(url)
-            await call.message.delete()
-            await call.message.answer(f"Пост {url} успешно удален")
-            logger.info(f"Пост {url} удален")
-            break
-    # if url in temp.current_posts:
-    #     temp.current_posts.remove(url)
-    #     await call.message.answer("Пост успешно удален")
-    #     logger.info(f"Пост {url} удален")
-    else:
+    try:
+        await call.message.delete()
+        url = call.data[12:]
+        for p in temp.current_posts:
+            if url == p:
+                try:
+                    await call.bot.delete_message(p.chat_id, p.message_id)
+                except Exception as e:
+                    logger.critical(e)
+                temp.current_posts.remove(url)
+                await call.message.answer(f"Пост {url} успешно удален")
+                logger.info(f"Пост {url} удален")
+                break
+        # if url in temp.current_posts:
+        #     temp.current_posts.remove(url)
+        #     await call.message.answer("Пост успешно удален")
+        #     logger.info(f"Пост {url} удален")
+        else:
+            await call.message.answer("Пост не найден в очереди")
+    except Exception as e:
+        logger.critical(e)
         await call.message.answer("Пост не найден в очереди")
 
 

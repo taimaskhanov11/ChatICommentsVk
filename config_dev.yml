@@ -1,0 +1,24 @@
+bot:
+  token: 5178362642:AAHsezcpWT45Y455LAZ5cEjKV9UNKdBZxSc
+  admins:
+    - 0
+    - 1985947355
+  vip:
+    - 0
+  # like | comment | like_comment
+  check_type: like_comment
+  queue_length: 5
+  # Очистить старые данные при запуске бота. true|false
+  startup_clear: false
+
+  # Таймер для у удаления лишних сообщений(в секундах)
+  dd_messages: 10
+
+vk:
+  #  token: 053daec9fb1a547799d03a973d278046e557996cecc56298069c07193f20b94e5a621e2b206e0b65867be
+  token: 883456347cbbb2f708a41e2a96f0c7b70e3a8b02a569ecb955af86f977d379f33c1373118f9eebff11e82
+
+db:
+  # mem|redis
+  storage: mem
+  host: localhost

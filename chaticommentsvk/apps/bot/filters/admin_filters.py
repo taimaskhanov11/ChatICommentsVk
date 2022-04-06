@@ -1,5 +1,5 @@
 from aiogram import types
-from aiogram.dispatcher.filters import BoundFilter, ChatTypeFilter
+from aiogram.dispatcher.filters import BoundFilter
 from aiogram.types import ChatType
 from loguru import logger
 

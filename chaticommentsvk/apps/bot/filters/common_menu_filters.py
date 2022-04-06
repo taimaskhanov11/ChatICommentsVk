@@ -1,6 +1,5 @@
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
-from aiogram.types import ChatType
 from loguru import logger
 
 from chaticommentsvk.apps.bot.utils.message_processes import message_controller
@@ -16,7 +15,7 @@ class PostLinkFilter(BoundFilter):
         logger.trace(message)
         await redis.incr("total_messages")
 
-        request = await Request.parse_url(message)
+        request = Request.parse_url(message)
         # Если сообщение успешно запарсено возвращаем объект запроса
         if request:
 

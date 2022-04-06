@@ -11,14 +11,19 @@ aiovk = "^4.0.0"
 aiogram = "^2.19"
 pydantic = "^1.9.0"
 PyYAML = "^6.0"
-aioredis = {extras = ["hiredis"], version = "^2.0.1"}
+aioredis = { extras = ["hiredis"], version = "^2.0.1" }
 redis-om = "^0.0.20"
 
-
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.1.1"
 black = "*"
 isort = "*"
+pytest-asyncio = "^0.18.3"
+pytest-xdist = "^2.5.0"
+
+[tool.pytest.ini_options]
+addopts="--color=yes"
+asyncio_mode="auto"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

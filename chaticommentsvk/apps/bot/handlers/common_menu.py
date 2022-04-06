@@ -11,7 +11,6 @@ from chaticommentsvk.apps.vk.classes import Request, Response
 from chaticommentsvk.config.answer import answer
 from chaticommentsvk.config.config import config
 from chaticommentsvk.db.db_main import temp, redis
-
 # todo 19.03.2022 13:30 taima: удаление сообщений после определенного времени
 # todo 19.03.2022 13:33 taima: проверять какие задания выполнены какие нет
 # todo 19.03.2022 12:47 taima:
@@ -27,7 +26,7 @@ async def all_text(message: types.Message, new_request: Request):
 
             # Получение проверяемого пользователя
 
-            checker_user = await vk_checker.other_user(message.text) or new_request.like.owner_id
+            checker_user = await vk_checker.is_other_user(message.text) or new_request.like.owner_id
 
             if not checker_user:
                 await message_controller(
@@ -60,9 +59,9 @@ async def all_text(message: types.Message, new_request: Request):
                 if unfinished_tasks:
                     unfulfilled_s = answer.common.check_failed
                     # todo 19.03.2022 14:37 taima: enumarate
-                    for task in unfinished_tasks:
+                    for num, task in enumerate(unfinished_tasks, 1):
                         # todo 19.03.2022 21:25 taima: пофиксить проверку
-                        unfulfilled_s += f"{task.unfulfilled}\n"
+                        unfulfilled_s += f"{num}. {task.unfulfilled}\n"
                     # await message.answer(unfulfilled_s, disable_web_page_preview=True)
                     await message_controller(message, unfulfilled_s, disable_web_page_preview=True)
 
