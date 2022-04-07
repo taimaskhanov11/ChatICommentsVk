@@ -27,8 +27,11 @@ async def send_check_request(checker_user: int, vk_checker: VkChecker) -> tuple:
             response_list.append(res)
         else:
             errors_list.append(res)
-            temp.current_posts.remove(res.url)
-
+            try:
+                temp.current_posts.remove(res.url)
+                logger.warning(f"Пост без доступа успешно удален {res}")
+            except Exception as e:
+                logger.critical(f"Ошибка при удалении {res}|{e}")
     logger.debug(f"Весь результат|{result}")
     logger.debug(f"Ошибки |{errors_list}")
     logger.debug(f"Пройденные посты |{response_list}")
