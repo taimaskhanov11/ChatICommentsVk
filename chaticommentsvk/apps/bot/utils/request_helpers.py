@@ -20,15 +20,18 @@ async def send_check_request(checker_user: int, vk_checker: VkChecker) -> tuple:
 
     result = await asyncio.gather(*tasks)
 
-    # errors_list = []
+    errors_list = []
     response_list: list[Response] = []
     for res in result:
         if isinstance(res, Response):
             response_list.append(res)
         else:
+            errors_list.append(res)
             temp.current_posts.remove(res.url)
 
     logger.debug(f"Весь результат|{result}")
+    logger.debug(f"Ошибки |{errors_list}")
+    logger.debug(f"Пройденные посты |{response_list}")
     not_done_response: tuple[Optional[Response], ...] = tuple(filter(lambda x: not bool(x), response_list))
     logger.debug(f"Не выполненные задачи|{not_done_response}")
     return not_done_response
