@@ -89,6 +89,9 @@ class Response(BaseModel):
         answer += self.url
         return answer
 
+class Error(BaseModel):
+    url: str
+
 
 if __name__ == "__main__":
     b = CommentRequest(type="photo", owner_id=1, item_id=1, photo_id=1)

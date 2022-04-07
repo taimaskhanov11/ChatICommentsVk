@@ -7,7 +7,7 @@ from aiovk import API, TokenSession
 from aiovk.exceptions import VkAPIError
 from loguru import logger
 
-from chaticommentsvk.apps.vk.classes import CommentRequest, LikeRequest, Request, Response
+from chaticommentsvk.apps.vk.classes import CommentRequest, LikeRequest, Request, Response, Error
 from chaticommentsvk.config.config import config
 from chaticommentsvk.db.db_main import redis
 
@@ -94,21 +94,26 @@ class VkChecker:
 
     async def send_request(
             self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
-    ) -> Response:
+    ) -> Response | Error:
         """Проверка определенного типа запроса"""
-        is_liked, is_commented = True, True
+        try:
+            is_liked, is_commented = True, True
 
-        if check_type == "like":
-            is_liked = await self.is_liked(user_id, request.like)
-        elif check_type == "comment":
-            is_commented = await self.is_commented(user_id, request.comment)
-        else:
-            is_liked, is_commented = await asyncio.gather(
-                self.is_liked(user_id, request.like), self.is_commented(user_id, request.comment)
+            if check_type == "like":
+                is_liked = await self.is_liked(user_id, request.like)
+            elif check_type == "comment":
+                is_commented = await self.is_commented(user_id, request.comment)
+            else:
+                is_liked, is_commented = await asyncio.gather(
+                    self.is_liked(user_id, request.like), self.is_commented(user_id, request.comment)
+                )
+            return Response(
+                url=request.url, is_liked=is_liked, is_commented=is_commented,
+                is_successfully=all((is_liked, is_commented))
             )
-        return Response(
-            url=request.url, is_liked=is_liked, is_commented=is_commented, is_successfully=all((is_liked, is_commented))
-        )
+        except Exception as e:
+            logger.warning(e)
+            return Error(url=request.url)
 
 
 async def main():
