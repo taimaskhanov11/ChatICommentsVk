@@ -27,6 +27,12 @@ async def all_text(message: types.Message, new_request: Request):
             # Получение проверяемого пользователя
 
             checker_user = await vk_checker.is_other_user(message.text) or new_request.like.owner_id
+            if checker_user < 0:
+                await message_controller(
+                    message,
+                    "Добавьте ссылку на ваш аккаунт через !!",
+                )
+                return
 
             if not checker_user:
                 await message_controller(
