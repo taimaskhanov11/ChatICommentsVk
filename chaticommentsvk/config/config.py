@@ -12,6 +12,10 @@ def load_yaml(file) -> dict:
     with open(Path(BASE_DIR, file), "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
+def load_arg_yaml(file) -> dict:
+    with open(Path(BASE_DIR, f"{file}.yml"), "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 
 class Bot(BaseModel):
     token: str
@@ -38,4 +42,4 @@ class Config(BaseModel):
     db: Database
 
 
-config = Config(**load_yaml("config.yml"))
+config = Config(**load_yaml("config_dev.yml"))
