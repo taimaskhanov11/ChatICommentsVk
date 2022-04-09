@@ -96,9 +96,9 @@ class VkChecker:
             self, user_id, request: Request, check_type: typing.Literal["like", "comment", "like_comment"]
     ) -> Response | Error:
         """Проверка определенного типа запроса"""
-        try:
-            is_liked, is_commented = True, True
+        is_liked, is_commented = True, True
 
+        try:
             if check_type == "like":
                 is_liked = await self.is_liked(user_id, request.like)
             elif check_type == "comment":
@@ -111,9 +111,11 @@ class VkChecker:
                 url=request.url, is_liked=is_liked, is_commented=is_commented,
                 is_successfully=all((is_liked, is_commented))
             )
-        except Exception as e:
-            logger.warning(e)
-            return Error(url=request.url)
+        except VkAPIError as e:
+            logger.warning(f"{request}|{e}")
+            raise e
+            # logger.warning(e)
+            # return Error(url=request.url)
 
 
 async def main():
@@ -156,11 +158,16 @@ async def main():
     # res1 = await checker.api.likes.getList(type="photo", owner_id=583757810, item_id=457256930)
     # res2 = await checker.api.likes.getList(type="post", owner_id=583757810, item_id=1496)
     "https://vk.com/wall323711139_2920"
-    res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=323711139, post_id=2920)
-    # res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
+    # res2 = await checker.api.wall.getComments(type=1, omega=3, owner_id=323711139, post_id=2920)
+    try:
+        res2 = await checker.api.likes.isLiked(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
+    except VkAPIError as e:
+        print(e.error_code)
+
     # res2 = await checker.api.likes.getList(type="post", user_id=408048349, owner_id=-149218373, item_id=9938)
     # res2 = await checker.api.users.get(user_ids="id204982390")
-    print(res2)
+    "15"
+    # print(res2)
     # "https://vk.com/we_use_django?w=wall-149218373_9938"
     # "https://vk.com/gartykillit?z=photo624187368_457242906%2Falbum624187368_00%2Frev"
     #
